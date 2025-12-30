@@ -8,6 +8,8 @@
   @gitbucket.core.html.menu("commitgraphs", repository){
 
     <script src="@context.path/plugin-assets/commitgraphs-chartjs/chart.umd.min.js"></script>
+    <script src="@context.path/plugin-assets/commitgraphs-chartjs/luxon.js"></script>
+    <script src="@context.path/plugin-assets/commitgraphs-chartjs/chartjs-adapter-luxon.js"></script>
 
     <div class="row-fluid">
     @commitGraphs.zipWithIndex.map { case (cg, i) =>
@@ -28,7 +30,7 @@
       <script>
         var dateLabels@i = [
           @cg.dailys.map { d =>
-            @{"new Date(%4d,%2d,%2d,0,0,0).toLocaleDateString(navigator.language),".format(d.date.getYear()+1900,d.date.getMonth(),d.date.getDate()) }
+            @{"new Date(%4d,%2d,%2d,0,0,0),".format(d.date.getYear()+1900,d.date.getMonth(),d.date.getDate()) }
           }
         ];
         var data@i = {
@@ -49,7 +51,14 @@
           data: data@i,
           options: {
             responsive: true,
+            locale: navigator.language,
             scales: {
+              x: {
+                  type: 'time',
+                  time: {
+                      unit: 'day'
+                  }
+              },
               y: {
                 beginAtZero: true
               }
