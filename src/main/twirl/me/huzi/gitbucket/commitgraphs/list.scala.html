@@ -1,0 +1,84 @@
+@(repository: gitbucket.core.service.RepositoryService.RepositoryInfo,
+  commitGraphs: Seq[me.huzi.gitbucket.commitgraphs.controller.CommitGraph])(implicit context: gitbucket.core.controller.Context)
+@import context._
+@import gitbucket.core.view.helpers._
+@import java.time.Instant
+@import java.time.ZoneId
+@gitbucket.core.html.main("Commit Graphs", Some(repository)){
+  @gitbucket.core.html.menu("commitgraphs", repository){
+
+    <script src="@context.path/plugin-assets/commitgraphs-chartjs/chart.umd.min.js"></script>
+
+    <div class="row-fluid">
+    @commitGraphs.zipWithIndex.map { case (cg, i) =>
+      <div class="col-md-6">
+        <div class="box-header">
+          <div>
+            @avatar(cg.userName, 20, mailAddress = cg.mailAddress)
+            @user(cg.userName, cg.mailAddress, "username")
+          </div>
+          <div>
+            <small><span class="muted">@cg.commits commits</span> / <span style="color: #6cc644;">@cg.additions ++</span> / <span style="color: #bd2c00;">@cg.deletions --</span></small>
+          </div>
+        </div>
+        <div class="box-content-bottom">
+          <canvas id="chart_div_@i" style="height: 300px;"></canvas>
+        </div>
+      </div>
+      <script>
+        var dateLabels@i = [
+          @cg.dailys.map { d =>
+            @{"new Date(%4d,%2d,%2d,0,0,0).toLocaleDateString(navigator.language),".format(d.date.getYear()+1900,d.date.getMonth(),d.date.getDate()) }
+          }
+        ];
+        var data@i = {
+          labels: dateLabels@i,
+          datasets: [{
+            label: 'Commits',
+            data: [
+              @cg.dailys.map { d =>
+                @{"%d,".format(d.commits)}
+              }
+            ],
+            fill: true
+          }]
+        };
+
+        var lineConfig@i = {
+          type: 'line',
+          data: data@i,
+          options: {
+            responsive: true,
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            },
+            plugins: {
+              legend: {
+                position: 'top',
+              },
+              title: {
+                display: true,
+                text: 'Commits over Time'
+              }
+            }
+          },
+        };
+
+        var myChart@i = new Chart(
+          document.getElementById('chart_div_@i'),
+          lineConfig@i
+        );
+      </script>
+
+      @if(((i+1) % 2) == 0) {
+    </div><!-- /.row-fluid -->
+    <div class="row-fluid">
+      }
+    }
+    </div><!-- /.row-fluid -->
+
+
+  }
+}
