@@ -33,6 +33,6 @@ class Plugin extends gitbucket.core.plugin.Plugin {
   )
 
   override val systemSettingMenus: Seq[(Context) => Option[Link]] =
-    Seq((ctx: Context) => Some(Link("Commit Graph", "Commit Graph", "admin/commitgraphs-chartjs")))
+    Seq((ctx: Context) => Some(Link("Commit Graph(chart.js)", "Commit Graph(chart.js)", "admin/commitgraphs-chartjs")))
 
 }
