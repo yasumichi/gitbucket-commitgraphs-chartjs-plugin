@@ -1,6 +1,6 @@
 name := "gitbucket-commitgraphs-chartjs-plugin"
 organization := "io.github.gitbucket"
-version := "0.1.0"
+version := "0.1.1"
 scalaVersion := "2.13.16"
 gitbucketVersion := "4.36.2"
 
