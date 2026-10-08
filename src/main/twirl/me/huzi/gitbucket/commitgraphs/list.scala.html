@@ -1,24 +1,16 @@
 @(repository: gitbucket.core.service.RepositoryService.RepositoryInfo,
-  commitGraphs: Seq[me.huzi.gitbucket.commitgraphs.controller.CommitGraph])(implicit context: gitbucket.core.controller.Context)
+  commitGraphs: Seq[me.huzi.gitbucket.commitgraphs.service.CommitGraph])(implicit context: gitbucket.core.controller.Context)
 @import context._
 @import gitbucket.core.view.helpers._
 @import java.time.Instant
 @import java.time.ZoneId
 @gitbucket.core.html.main("Commit Graphs", Some(repository)){
-  @gitbucket.core.html.menu("commitgraphs", repository){
+  @gitbucket.core.html.menu("commitgraphs-chartjs", repository){
 
     <script src="@context.path/plugin-assets/commitgraphs-chartjs/chart.umd.min.js"></script>
     <script src="@context.path/plugin-assets/commitgraphs-chartjs/luxon.js"></script>
     <script src="@context.path/plugin-assets/commitgraphs-chartjs/chartjs-adapter-luxon.js"></script>
 
-    <script type="text/javascript">
-      document.querySelectorAll('.menu-item-hover').forEach((node, index) => {
-        node.classList.remove('active');
-        if (node.querySelector('span').textContent.trim() === 'Commit Graphs(chart.js)') {
-          node.classList.add('active');
-        }
-      });
-    </script>
     <div class="row-fluid">
     @commitGraphs.zipWithIndex.map { case (cg, i) =>
       <div class="col-md-6">
@@ -38,7 +30,7 @@
       <script>
         var dateLabels@i = [
           @cg.dailys.map { d =>
-            @{"new Date(%4d,%2d,%2d,0,0,0),".format(d.date.getYear()+1900,d.date.getMonth(),d.date.getDate()) }
+            @{"new Date(%4d,%2d,%2d,0,0,0),".format(d.date.getYear,d.date.getMonthValue-1,d.date.getDayOfMonth) }
           }
         ];
         var data@i = {
